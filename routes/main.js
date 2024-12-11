@@ -9,9 +9,10 @@ var appData = {appName: "Harper"}
 
 // Handle our routes
 router.get('/', function(req, res) {
-    // Render the index page with appData
-    res.render('index.ejs', appData);
+     // Render the index page with appData
+   res.render('index.ejs', appData);
 });
+
 
 router.get('/about', function(req, res) {
     // Render the about page with appData
@@ -45,7 +46,7 @@ router.get('/login', function(req, res) {
     res.render('login.ejs', appData);
 });
 
-router.post('/login', (req, res) => {
+router.post('/login',function (req, res) {
     // Extract login data from the request body
     const { email, password } = req.body;
 
@@ -72,7 +73,7 @@ router.get('/register', function(req, res) {
     res.render('register.ejs', appData);
 });
 
-router.post('/register', (req, res) => {
+router.post('/register', function(req, res)  {
     // Extract registration data from the request body
     const { first_name, last_name, email, password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 8);
@@ -104,52 +105,85 @@ router.post('/register', (req, res) => {
 });
 
 router.get('/account', function(req, res) {
-    if (req.session.loggedin) {
-        const userId = req.session.userId;
+     if (req.session.loggedin) {
+         const userId = req.session.userId;
 
         // Fetch user's search history
-        req.app.locals.connection.query('SELECT search_query, timestamp FROM search_history WHERE user_id = ? ORDER BY timestamp DESC LIMIT 5', [userId], (err, searchHistory) => {
+       req.app.locals.connection.query('SELECT search_query, timestamp FROM search_history WHERE user_id = ? ORDER BY timestamp DESC LIMIT 5', [userId], (err, searchHistory) => {
             if (err) throw err;
 
             // Render the welcome page with the username and search history
             res.render('account.ejs', {
-                username: req.session.username,
-                searchHistory: searchHistory
+                 username: req.session.username,
+                 searchHistory: searchHistory
             });
         });
-    } else {
-        // Send an error message if the user is not logged in
-        res.send('Please log in to view your account!');
+     } else {
+         // Send an error message if the user is not logged in
+         res.send('Please log in to view your account!');
     }
+ });
+
+
+router.get('/account', function(req, res) {
+//     if (req.session.loggedin) {
+//         const userId = req.session.userId;
+
+//         // Fetch user's search history
+//         req.app.locals.connection.query('SELECT search_query, timestamp FROM search_history WHERE user_id = ? ORDER BY timestamp DESC', [userId], (err, searchHistory) => {
+//             if (err) throw err;
+
+//             // Render the account page with username and search history
+//             res.render('account.ejs', {
+//                 username: req.session.username,
+//                 searchHistory: searchHistory // Pass search history to the template
+//             });
+//         });
+//     } else {
+//         // Send an error message if the user is not logged in
+//         res.send('Please log in to view your account!');
+//     }
 });
+
 
 router.get('/signout-confirmation', function(req, res) {
-    // Destroy the session to sign out the user
+     // Destroy the session to sign out the user
     req.session.destroy(function(err) {
-        if (err) {
-            return res.send('Error signing out.');
-        }
-        // Redirect to the home page after sign-out
+         if (err) {
+             return res.send('Error signing out.');
+         }
+         // Redirect to the home page after sign-out
         res.redirect('/');
     });
-});
+ });
 
-router.get('/search-result', (req, res) => {
-    const keyword = req.query.keyword;
-    const videoId = req.query.videoId;
+
+
+
+ router.get('/search-result', (req, res) => {
+     const keyword = req.query.keyword;
+     const videoId = req.query.videoId;
     const userId = req.session.userId; // Ensure userId is defined here
+    
 
-    // First query: fetch videos based on `videoId` or `keyword`
-    if (videoId) {
+     // Fetch all video titles for the dropdown
+     req.app.locals.connection.query('SELECT id, title FROM videos', (err, videoTitles) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).send('Database error');
+        }
+
+     // First query: fetch videos based on `videoId` or `keyword`
+     if (videoId) {
         req.app.locals.connection.query('SELECT * FROM videos WHERE id = ?', [videoId], (err, results) => {
-            if (err) {
-                console.error('Database error:', err);
+             if (err) {
+                 console.error('Database error:', err);
                 return res.status(500).send('Database error');
             }
             // Render the search results page with the fetched videos
             res.render('search-result.ejs', { videos: results, keyword: '' });
         });
-    } else if (keyword) {
+     } else if (keyword) {
         req.app.locals.connection.query('SELECT * FROM videos WHERE title LIKE ? OR description LIKE ?', [`%${keyword}%`, `%${keyword}%`], (err, results) => {
             if (err) {
                 console.error('Database error:', err);
@@ -157,21 +191,21 @@ router.get('/search-result', (req, res) => {
             }
 
             // Save the search query to the database only if the keyword is present
-            req.app.locals.connection.query('INSERT INTO search_history (user_id, search_query) VALUES (?, ?)', [userId, keyword], (err) => {
+             req.app.locals.connection.query('INSERT INTO search_history (user_id, search_query) VALUES (?, ?)', [userId, keyword], (err) => {
                 if (err) {
                     console.error('Database error while saving search history:', err);
                     return res.status(500).send('Database error while saving search history');
                 }
-
-                // Render the search results page with the fetched videos
+                 // Render the search results page with the fetched videos
                 res.render('search-result.ejs', { videos: results, keyword: keyword });
             });
-        });
+         });
     } else {
         // Render the search results page with no videos if no keyword is provided
-        res.render('search-result.ejs', { videos: [], keyword: '' });
+         res.render('search-result.ejs', { videos: [], keyword: '' });
     }
-});
+ });
+ });
 
 // Export the router object so index.js can access it
 module.exports = router;

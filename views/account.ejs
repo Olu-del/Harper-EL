@@ -3,48 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- The title of the webpage -->
-    <title>Welcome</title>
-    <!-- Link to the external CSS stylesheet-->
+    <title>Account</title>
     <link rel="stylesheet" type="text/css" href="/main.css" />
 </head>
 <body>
-
-    <!-- Navigation bar with links to different sections of the website -->
+    <!-- Navigation bar -->
     <nav>
         <a href="/">Home</a>
         <a href="/about">About</a>
+        <a href="/register">Register</a>
         <a href="/account">Account</a>
-        <a href="/signout-confirmation">Sign out</a>
         <a href="/courses">Video Section</a>
         <a href="/search-result">Search</a>
         <a href="/contact">Contact</a>
     </nav>
 
-    <!-- Main heading of the webpage-->
+    <!-- Main content -->
     <h1>Welcome, <%= username %>!</h1>
-    <!-- Link to sign out -->
-    <a href="/signout-confirmation">Sign out</a>
-      
-    <!-- Subheading for the search history section -->
-    <h2>Your Search History:</h2>
-    <ul>
-        <!-- Displaying search history if available -->
-        <% if (searchHistory && searchHistory.length > 0) { %>
-            <% searchHistory.forEach(function(item) { %>
-                <li><%= item.search_query %> (searched on <%= new Date(item.timestamp).toLocaleString() %>)</li>
-            <% }) %>
-        <% } else { %>
-            <!-- Message displayed if no search history is found -->
-            <li>No search history found.</li>
-        <% } %>
-    </ul>
 
-    <!-- Footer section with copyright information and additional navigation links -->
+    <a href="/signout-confirmation">Sign out</a>
+
+    <h2>Your Search History:</h2>
+    <% if (searchHistory.length > 0) { %>
+        <ul>
+            <% searchHistory.forEach(function(record) { %>
+                <li>
+                    "<%= record.search_query %>" (searched on <%= new Date(record.timestamp).toLocaleString() %>)
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No search history found.</p>
+    <% } %>
+
+    <!-- Footer -->
     <footer>
         <p>&copy; <%= new Date().getFullYear() %> Harper eLearning Platform. All rights reserved.</p>
         <nav>
             <a href="/about">About</a>
+            <a href="/register">Join</a>
             <a href="/contact">Contact</a>
         </nav>
     </footer>

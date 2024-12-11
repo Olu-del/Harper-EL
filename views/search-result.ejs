@@ -26,30 +26,32 @@
     <h1>Search for Videos</h1>
 
     <!-- Search form for users to enter keywords and submit the search -->
-    <form action="/search-result" method="get">
+     <form action="/search-result" method="get">
         <input type="text" name="keyword" placeholder="Enter keyword" required>
         <button type="submit">Search</button>
-    </form>
+    </form> 
 
-    <!-- Displaying search results -->
-    <% if (videos.length > 0) { %>
-        <% videos.forEach(function(video) { %>
-            <div class="video">
-                <!-- Displaying the title and description of each video -->
-                <h2><%= video.title %></h2>
-                <p><%= video.description %></p>
-                <!-- Video player with a poster image and controls -->
-                <video width="300" height="200" controls poster="<%= video.poster %>">
-                    <source src="<%= video.url %>" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-        <% }) %>
-    <% } else { %>
-        <!-- Message displayed if no videos are found for the entered keyword -->
-        <p>No videos found for "<%= keyword %>".</p>
-    <% } %>
+<!-- Displaying search results -->
+<% if (videos.length > 0) { %>
+    <% videos.forEach(function(video) { %>
+        <div class="video">
+            <!-- Displaying the title and description of each video -->
+            <h2><%= video.title %></h2>
+            <p><%= video.description %></p>
+            <!-- Video player with a poster image and controls -->
+            <video width="300" height="200" controls poster="<%= video.poster %>">
+                <source src="<%= video.url %>" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    <% }) %>
+<% } else { %>
+    <!-- Message displayed if no videos are found for the entered keyword -->
+    <p>No videos found for "<%= keyword %>".</p>
+<% } %>
 
+
+    
     <!-- Footer section with copyright information and additional navigation links -->
     <footer>
         <p>&copy; <%= new Date().getFullYear() %> Harper eLearning Platform. All rights reserved.</p>

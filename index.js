@@ -1,5 +1,4 @@
 // Setup express and ejs
-// NEW
 var express = require ('express')
 var ejs = require('ejs')
 var mysql = require('mysql2'); //This line to require the mysql module
@@ -27,6 +26,7 @@ app.use(session({
 app.use(express.static(__dirname + '/public'));
 
 // MySQL connection
+
 const connection = mysql.createConnection({
    host: 'localhost',
    user: 'harper_elearning_app',
